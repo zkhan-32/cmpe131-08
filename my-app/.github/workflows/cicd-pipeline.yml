@@ -1,12 +1,16 @@
+# A descriptive name for your workflow
 name: Node.js CI/CD Pipeline
 
+# --- Triggers ---
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
+# --- Jobs ---
 jobs:
+  # Continuous Integration job
   build-and-test:
     runs-on: ubuntu-latest
     steps:
@@ -25,6 +29,7 @@ jobs:
       - name: Run tests
         run: npm test
 
+  # Continuous Delivery job
   build-and-push:
     needs: build-and-test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -46,6 +51,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/simple-node-app:${{ github.sha }}
 
+  # Optional deploy job
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
